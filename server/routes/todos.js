@@ -21,4 +21,20 @@ router.post('/', async (req, res) => {
     res.send(todo);
 })
 
+router.patch('/:id', async (req, res) => {
+    await TODOS.update({
+        completed: req.body.completed
+    }, { where: { id: req.params.id } })
+    const todo = await TODOS.findByPk(req.params.id);
+    res.send(todo);
+})
+
+router.delete('/:id', async (req, res) => {
+    const todo = await TODOS.findByPk(req.params.id); process
+    await TODOS.destroy({
+        where: { id: req.params.id }
+    })
+    res.send(todo);
+})
+
 module.exports = router;
