@@ -1,20 +1,18 @@
 import React from 'react';
+import API from "../lib/api";
 const Form = ({ inputText, setInputText, todos, setTodos, setStatus, filterHandler }) => {
 
     const inputTextHandler = function (e) {
         setInputText(e.target.value)
     }
 
-    const submitTodoHandler = function (e) {
+    const submitTodoHandler = async function (e) {
         e.preventDefault();
-        setTodos([
-            ...todos,
-            {
-                text: inputText,
-                completed: false,
-                id: Math.random() * 1000
-            }
-        ])
+        const todo = await API.todos.create({
+            text: inputText,
+            completed: false
+        });
+        setTodos(todos.concat(todo))
         setInputText('')
     }
 

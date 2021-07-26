@@ -1,16 +1,17 @@
 import React from 'react';
-
+import API from "../lib/api";
 const Todo = ({ todo, todos, setTodos }) => {
-    const deleteHandler = () => {
+    const deleteHandler = async () => {
+        await API.todos.delete(todo.id);
         setTodos(todos.filter(el => el.id !== todo.id))
     }
-    const completeHandler = () => {
+    const completeHandler = async () => {
+        const updatedTodo = await API.todos.patch(todo.id, {
+            completed: !todo.completed
+        })
         setTodos(todos.map(el => {
             if (el.id === todo.id) {
-                return {
-                    ...el,
-                    completed: !el.completed
-                }
+                return updatedTodo
             }
             return el
         }))

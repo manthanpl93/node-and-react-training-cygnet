@@ -1,46 +1,89 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import './App.css';
 import Form from './components/Form';
 import TodoList from './components/TodoList';
+import API from "./lib/api";
+export default class App extends React.Component {
 
-function App() {
-  const [inputText, setInputText] = useState("")
-  const [todos, setTodos] = useState([])
-  const [status, setStatus] = useState("all")
-  const [filteredTodos, setFilteredTodos] = useState([])
+  constructor(props) {
+    super(props)
+    this.state = {
+      inputText: "",
+      todos: [],
+      status: "all",
+      filteredTodos: []
+    }
+  }
 
-  useEffect(() => {
-    filterHandler();
-  }, [todos, status])
+  componentDidMount = () => {
+    this.fetchTodos()
+  }
 
-  const filterHandler = () => {
+  render() {
+    const { todos, inputText, filteredTodos } = this.state;
+    return (
+      <div className="App">
+        <header>
+          <h1>Cygnet's Todo List</h1>
+        </header>
+
+        <Form todos={todos}
+          setTodos={this.setTodos}
+          inputText={inputText}
+          setInputText={this.setInputText}
+          setStatus={this.setStatus} />
+
+        <TodoList todos={filteredTodos} setTodos={this.setTodos} />
+      </div>
+    );
+  }
+
+  filterHandler = () => {
+    const { todos, status } = this.state;
     switch (status) {
       case 'completed':
-        setFilteredTodos(todos.filter(todo => todo.completed === true))
+        this.setFilteredTodos(todos.filter(todo => todo.completed === true))
         break;
       case 'uncompleted':
-        setFilteredTodos(todos.filter(todo => todo.completed === false))
+        this.setFilteredTodos(todos.filter(todo => todo.completed === false))
         break;
       default:
-        setFilteredTodos(todos)
+        this.setFilteredTodos(todos)
         break;
     }
   }
-  return (
-    <div className="App">
-      <header>
-        <h1>Cygnet's Todo List</h1>
-      </header>
 
-      <Form todos={todos}
-        setTodos={setTodos}
-        inputText={inputText}
-        setInputText={setInputText}
-        setStatus={setStatus} />
+  fetchTodos = async () => {
+    const todos = await API.todos.getAll();
+    this.setTodos(todos);
+  }
 
-      <TodoList todos={filteredTodos} setTodos={setTodos} />
-    </div>
-  );
+  setFilteredTodos = (todos) => {
+    this.setState({
+      filteredTodos: todos
+    })
+  }
+
+  setInputText = (input) => {
+    this.setState({
+      inputText: input
+    })
+  }
+
+  setStatus = (status) => {
+    this.setState({
+      status: status
+    }, () => {
+      this.filterHandler();
+    })
+  }
+
+  setTodos = (todos) => {
+    this.setState({
+      todos: todos
+    }, () => {
+      this.filterHandler();
+    })
+  }
+
 }
-
-export default App;
