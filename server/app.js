@@ -11,8 +11,8 @@ app.use('/', routes);
 
 const port = process.env.PORT || 3001;
 
-console.log(process.env.NODE_ENV)
-
-app.listen(port)
+app.listen(port, () => {
+    console.log(`server is running under ${port}`)
+})
 
 module.exports = app;

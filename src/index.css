@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.no-todos-message{
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.4rem;
+}

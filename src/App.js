@@ -1,23 +1,22 @@
-import React, { useEffect } from 'react'
-import './App.css';
-import Form from './components/Form';
-import TodoList from './components/TodoList';
+import React, { useEffect } from "react";
+import "./App.css";
+import Form from "./components/Form";
+import TodoList from "./components/TodoList";
 import API from "./lib/api";
 export default class App extends React.Component {
-
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       inputText: "",
       todos: [],
       status: "all",
-      filteredTodos: []
-    }
+      filteredTodos: [],
+    };
   }
 
   componentDidMount = () => {
-    this.fetchTodos()
-  }
+    this.fetchTodos();
+  };
 
   render() {
     const { todos, inputText, filteredTodos } = this.state;
@@ -27,13 +26,20 @@ export default class App extends React.Component {
           <h1>Cygnet's Todo List</h1>
         </header>
 
-        <Form todos={todos}
+        <Form
+          todos={todos}
           setTodos={this.setTodos}
           inputText={inputText}
           setInputText={this.setInputText}
-          setStatus={this.setStatus} />
-
-        <TodoList todos={filteredTodos} setTodos={this.setTodos} />
+          setStatus={this.setStatus}
+        />
+        {filteredTodos.length ? (
+          <TodoList todos={filteredTodos} setTodos={this.setTodos} />
+        ) : (
+          <p className="no-todos-message" data-testid="no-todos">
+            No todo list available
+          </p>
+        )}
       </div>
     );
   }
@@ -41,49 +47,54 @@ export default class App extends React.Component {
   filterHandler = () => {
     const { todos, status } = this.state;
     switch (status) {
-      case 'completed':
-        this.setFilteredTodos(todos.filter(todo => todo.completed === true))
+      case "completed":
+        this.setFilteredTodos(todos.filter((todo) => todo.completed === true));
         break;
-      case 'uncompleted':
-        this.setFilteredTodos(todos.filter(todo => todo.completed === false))
+      case "uncompleted":
+        this.setFilteredTodos(todos.filter((todo) => todo.completed === false));
         break;
       default:
-        this.setFilteredTodos(todos)
+        this.setFilteredTodos(todos);
         break;
     }
-  }
+  };
 
   fetchTodos = async () => {
     const todos = await API.todos.getAll();
     this.setTodos(todos);
-  }
+  };
 
   setFilteredTodos = (todos) => {
     this.setState({
-      filteredTodos: todos
-    })
-  }
+      filteredTodos: todos,
+    });
+  };
 
   setInputText = (input) => {
     this.setState({
-      inputText: input
-    })
-  }
+      inputText: input,
+    });
+  };
 
   setStatus = (status) => {
-    this.setState({
-      status: status
-    }, () => {
-      this.filterHandler();
-    })
-  }
+    this.setState(
+      {
+        status: status,
+      },
+      () => {
+        this.filterHandler();
+      }
+    );
+  };
 
   setTodos = (todos) => {
-    this.setState({
-      todos: todos
-    }, () => {
-      this.filterHandler();
-    })
-  }
-
+    this.setState(
+      {
+        todos: todos,
+      },
+      () => {
+        this.filterHandler();
+      }
+    );
+  };
 }
